@@ -163,7 +163,7 @@ func getStatusIcon(status string) string {
 	// Map package statuses to icons
 	statusMap := map[string]string{
 		// Package statuses
-		"uptodate":   "✅",
+		"uptodate":   "-",
 		"outdated":   "⚠️",
 		"vulnerable": "❌",
 		"missing":    "❌",
