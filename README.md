@@ -37,7 +37,7 @@ Stop the "works on my machine" problem before it starts.
 |----------|----------|
 | **🔍 Inspection** | Python version • Pip version • Package inventory • Venv validation |
 | **🛡️ Security** | Vulnerability scanning • Outdated detection • Performance hints • Consistency checks |
-| **🎨 Output** | Chinese-style formatting • JSON for CI/CD • Actionable suggestions • Minimal design |
+| **🎨 Output** | clean formatting • JSON for CI/CD • Actionable suggestions • Minimal design |
 
 ## 🚀 Quick Start
 
