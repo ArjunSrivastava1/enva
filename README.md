@@ -1,5 +1,4 @@
 <h1>
-  <br>
   <img src="https://raw.githubusercontent.com/ArjunSrivastava1/enva/main/assets/icon.svg" alt="enva" width="100">
   <br>
 </h1>
