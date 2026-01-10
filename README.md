@@ -27,7 +27,7 @@
 
 ## About
 
-enva is a command-line tool that inspects Python virtual environments with precision. It validates Python and pip versions, checks installed packages for security vulnerabilities, identifies outdated dependencies, and provides clean, actionable feedback in a Chinese-style output format.
+enva is a command-line tool that inspects Python virtual environments with precision. It validates Python and pip versions, checks installed packages for security vulnerabilities, identifies outdated dependencies, and provides clean, actionable feedback in a understandable output format.
 
 Stop the "works on my machine" problem before it starts.
 
