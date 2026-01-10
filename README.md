@@ -21,10 +21,6 @@
   <a href="#-contributing">Contributing</a>
 </p>
 
-<p>
-  <img src="https://raw.githubusercontent.com/ArjunSrivastava1/enva/main/assets/demo.png" alt="Demo" width="700">
-</p>
-
 ## About
 
 enva is a command-line tool that inspects Python virtual environments with precision. It validates Python and pip versions, checks installed packages for security vulnerabilities, identifies outdated dependencies, and provides clean, actionable feedback in a understandable output format.
@@ -37,7 +33,7 @@ Stop the "works on my machine" problem before it starts.
 |----------|----------|
 | **🔍 Inspection** | Python version • Pip version • Package inventory • Venv validation |
 | **🛡️ Security** | Vulnerability scanning • Outdated detection • Performance hints • Consistency checks |
-| **🎨 Output** | clean formatting • JSON for CI/CD • Actionable suggestions • Minimal design |
+| **🎨 Output** | Clean formatting • JSON for CI/CD • Actionable suggestions • Minimal design |
 
 ## 🚀 Quick Start
 
