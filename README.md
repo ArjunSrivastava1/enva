@@ -8,7 +8,6 @@
 <p>
   <a href="https://golang.org"><img src="https://img.shields.io/badge/Go-1.21+-00ADD8?logo=go&logoColor=white" alt="Go Version"></a>
   <a href="LICENSE"><img src="https://img.shields.io/badge/License-GPL%20v2-blue.svg" alt="License"></a>
-  <a href="https://github.com/ArjunSrivastava1/enva/releases"><img src="https://img.shields.io/github/v/release/ArjunSrivastava1/enva" alt="Release"></a>
   <a href="https://python.org"><img src="https://img.shields.io/badge/Python-3.7+-3776AB?logo=python&logoColor=white" alt="Python"></a>
 </p>
 
