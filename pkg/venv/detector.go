@@ -10,7 +10,6 @@ import (
 	"strings"
 )
 
-// IsValid checks if a directory is a valid virtual environment
 func IsValid(path string) bool {
 	if path == "" {
 		return false
@@ -21,7 +20,6 @@ func IsValid(path string) bool {
 		return false
 	}
 
-	// Check for venv markers
 	markers := []string{
 		filepath.Join(path, "bin", "python"),
 		filepath.Join(path, "bin", "activate"),
