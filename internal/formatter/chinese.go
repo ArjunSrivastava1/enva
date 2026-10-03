@@ -8,6 +8,7 @@ import (
 	"enva/internal/types"
 )
 
+// FormatChinese formats the validation result in a human-readable Chinese-friendly format
 func FormatChinese(result *types.ValidationResult) string {
 	var output strings.Builder
 
@@ -43,6 +44,7 @@ func FormatChinese(result *types.ValidationResult) string {
 	return output.String()
 }
 
+// formatVenvSection formats the virtual environment section
 func formatVenvSection(info *types.VenvInfo) string {
 	var section strings.Builder
 
@@ -69,6 +71,7 @@ func formatVenvSection(info *types.VenvInfo) string {
 	return section.String()
 }
 
+// formatDependenciesSection formats the dependencies section
 func formatDependenciesSection(deps []types.Dependency) string {
 	var section strings.Builder
 
@@ -105,6 +108,7 @@ func formatDependenciesSection(deps []types.Dependency) string {
 	return section.String()
 }
 
+// formatSecuritySection formats the security section
 func formatSecuritySection(security *types.SecurityScan) string {
 	var section strings.Builder
 
@@ -135,6 +139,7 @@ func formatSecuritySection(security *types.SecurityScan) string {
 	return section.String()
 }
 
+// formatSummarySection formats the summary section
 func formatSummarySection(result *types.ValidationResult) string {
 	var section strings.Builder
 
@@ -159,6 +164,7 @@ func formatSummarySection(result *types.ValidationResult) string {
 	return section.String()
 }
 
+// getStatusIcon returns the appropriate icon for a given status
 func getStatusIcon(status string) string {
 	// Map package statuses to icons
 	statusMap := map[string]string{
@@ -182,6 +188,7 @@ func getStatusIcon(status string) string {
 	return "❓"
 }
 
+// getStatusFromActivation returns the status based on activation state
 func getStatusFromActivation(activated string) string {
 	if activated == "activated" {
 		return "success"

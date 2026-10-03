@@ -1,16 +1,20 @@
 package scanner
 
 import (
+	"context"
 	"os"
 	"path/filepath"
 	"strings"
+	"sync"
+	"time"
 
-	"enva/internal/validator"
+	"enva/internal/types"
+	"enva/pkg/api/pypi"
 )
 
 // ScanDependencies scans packages in virtual environment
-func ScanDependencies(venvPath string) ([]validator.Dependency, error) {
-	var deps []validator.Dependency
+func ScanDependencies(venvPath string) ([]types.Dependency, error) {
+	var deps []types.Dependency
 
 	// Look for requirements.txt in project root
 	projectRoot := findProjectRoot(venvPath)
@@ -25,7 +29,7 @@ func ScanDependencies(venvPath string) ([]validator.Dependency, error) {
 
 		// Convert to Dependency structs
 		for name, version := range parsed {
-			dep := validator.Dependency{
+			dep := types.Dependency{
 				Name:    name,
 				Version: version,
 				Status:  "uptodate", // Default
@@ -34,8 +38,13 @@ func ScanDependencies(venvPath string) ([]validator.Dependency, error) {
 			// Check if outdated (simplified logic)
 			if strings.Contains(version, "==") {
 				// Check if this is latest (simplified)
-				dep.Latest = getLatestVersion(name)
-				if dep.Latest != "" && dep.Latest != strings.TrimPrefix(version, "==") {
+				latest, err := getLatestVersion(name)
+				if err != nil {
+					// If we can't get latest version from API, skip outdated check
+					continue
+				}
+				dep.Latest = latest
+				if latest != "" && latest != strings.TrimPrefix(version, "==") {
 					dep.Status = "outdated"
 				}
 			}
@@ -47,6 +56,7 @@ func ScanDependencies(venvPath string) ([]validator.Dependency, error) {
 	return deps, nil
 }
 
+// findProjectRoot finds the project root directory from venv path
 func findProjectRoot(venvPath string) string {
 	// Go up from venv to find project root
 	dir := filepath.Dir(venvPath)
@@ -73,7 +83,8 @@ func findProjectRoot(venvPath string) string {
 	return filepath.Dir(venvPath)
 }
 
-func parseRequirementsFile(path string) (map[string]string, error) {
+// ParseRequirementsFile parses a requirements.txt file
+func ParseRequirementsFile(path string) (map[string]string, error) {
 	content, err := os.ReadFile(path)
 	if err != nil {
 		return nil, err
@@ -90,8 +101,12 @@ func parseRequirementsFile(path string) (map[string]string, error) {
 			continue
 		}
 
+		// Skip options like -r, -e, --global-option
+		if strings.HasPrefix(line, "-") {
+			continue
+		}
+
 		// Parse package spec
-		// Simple parsing for now: package==version
 		if strings.Contains(line, "==") {
 			parts := strings.SplitN(line, "==", 2)
 			if len(parts) == 2 {
@@ -106,6 +121,27 @@ func parseRequirementsFile(path string) (map[string]string, error) {
 				version := strings.TrimSpace(parts[1])
 				result[pkg] = ">=" + version
 			}
+		} else if strings.Contains(line, "<=") {
+			parts := strings.SplitN(line, "<=", 2)
+			if len(parts) == 2 {
+				pkg := strings.TrimSpace(parts[0])
+				version := strings.TrimSpace(parts[1])
+				result[pkg] = "<=" + version
+			}
+		} else if strings.Contains(line, ">") && !strings.Contains(line, ">=") {
+			parts := strings.SplitN(line, ">", 2)
+			if len(parts) == 2 {
+				pkg := strings.TrimSpace(parts[0])
+				version := strings.TrimSpace(parts[1])
+				result[pkg] = ">" + version
+			}
+		} else if strings.Contains(line, "<") && !strings.Contains(line, "<=") {
+			parts := strings.SplitN(line, "<", 2)
+			if len(parts) == 2 {
+				pkg := strings.TrimSpace(parts[0])
+				version := strings.TrimSpace(parts[1])
+				result[pkg] = "<" + version
+			}
 		} else {
 			// Just package name
 			result[line] = ""
@@ -115,22 +151,11 @@ func parseRequirementsFile(path string) (map[string]string, error) {
 	return result, nil
 }
 
-func getLatestVersion(packageName string) string {
-	// In a real implementation, this would query PyPI API
-	// For now, return placeholder
-	versionMap := map[string]string{
-		"django":       "4.2.0",
-		"requests":     "2.31.0",
-		"flask":        "2.3.3",
-		"numpy":        "1.24.3",
-		"pandas":       "2.0.3",
-		"tensorflow":   "2.13.0",
-		"cryptography": "41.0.0",
-	}
+// getLatestVersion returns the latest version for a package using PyPI API
+func getLatestVersion(packageName string) (string, error) {
+	client := pypi.NewClient(context.Background(), "", pypi.Default().CacheTTL, pypi.Default().RateLimit, pypi.Default().MaxCacheSize)
+	defer client.Close()
 
-	if version, ok := versionMap[packageName]; ok {
-		return version
-	}
-
-	return "1.0.0" // Default
+	version, err := client.GetLatestVersion(packageName)
+	return version, err
 }

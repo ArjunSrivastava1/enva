@@ -3,53 +3,44 @@ package scanner
 import (
 	"fmt"
 
-	"enva/internal/validator"
+	"enva/internal/types"
 )
 
 // AnalyzePerformance checks for performance issues
-func AnalyzePerformance(venvPath string, deps []validator.Dependency) (*validator.Performance, error) {
-	perf := &validator.Performance{
+func AnalyzePerformance(venvPath string, deps []types.Dependency) (*types.Performance, error) {
+	perf := &types.Performance{
 		Status: "success",
 	}
 
-	// Check for large packages (simplified)
+	// Check for large packages
 	largePackages := []string{"tensorflow", "pytorch", "opencv-python"}
 	for _, pkg := range largePackages {
 		for _, dep := range deps {
 			if dep.Name == pkg {
-				perf.LargePackages = append(perf.LargePackages, validator.PackageSize{
+				perf.LargePackages = append(perf.LargePackages, types.PackageSize{
 					Name: pkg,
-					Size: "450MB+", // Example size
+					Size: "100MB+",
 				})
 			}
 		}
 	}
 
-	// Check for unused packages (simplified logic)
-	// In real implementation, would analyze imports vs installed
-	if len(deps) > 20 {
-		perf.UnusedPackages = []string{"example-unused-package"}
-		perf.Optimizations = append(perf.Optimizations, validator.Optimization{
-			Type:        "cleanup",
-			Description: "Remove unused packages to reduce environment size",
+	if len(perf.LargePackages) > 0 {
+		perf.Status = "warning"
+		perf.Optimizations = append(perf.Optimizations, types.Optimization{
+			Type:        "size",
+			Description: "Large packages may slow down environment",
 			Impact:      "medium",
 		})
 	}
 
-	// Check for outdated packages affecting performance
-	outdatedCount := 0
-	for _, dep := range deps {
-		if dep.Status == "outdated" {
-			outdatedCount++
-		}
-	}
-
-	if outdatedCount > 5 {
+	// Check for many packages
+	if len(deps) > 20 {
 		perf.Status = "warning"
-		perf.Optimizations = append(perf.Optimizations, validator.Optimization{
-			Type:        "update",
-			Description: fmt.Sprintf("Update %d outdated packages for performance improvements", outdatedCount),
-			Impact:      "high",
+		perf.Optimizations = append(perf.Optimizations, types.Optimization{
+			Type:        "quantity",
+			Description: fmt.Sprintf("Many packages (%d), consider streamlining", len(deps)),
+			Impact:      "low",
 		})
 	}
 
